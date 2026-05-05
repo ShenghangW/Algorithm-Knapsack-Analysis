@@ -3,7 +3,7 @@
 # Dynamic programming solution for computing exact
 # infection risk over a planning horizon of T days.
 #
-# __author__ = 'YOUR NAME HERE'
+# __author__ = 'Shenghang Weng'
 # __project__ = 'Modelling a Disease Outbreak'
 # __copyright__ = 'Copyright 2026, RMIT University'
 # -------------------------------------------------
@@ -53,7 +53,9 @@ def task_b(graph: Graph,
               r_{i,t} for vertex V_i at day t, for t in [0, T].
               table[0][source] = 1.0, all others at t=0 are 0.0.
     """
+
     n = graph.num_vertices()
+    vertices = graph.get_vertices()
 
     # --------------------------------------------------
     # Initialise the full risk table with zeros.
@@ -75,5 +77,20 @@ def task_b(graph: Graph,
     # subtract from 1 to get the infection risk.
     # Make sure patient zero stays at 1.0 for all t.
     # --------------------------------------------------
+    # Fill day by day
+    for t in range(1, T + 1):
+        for vertex in vertices:
+                # Start with "already infected" chance carrying over
+                already_infected = table[t - 1][vertex.index]
+
+                # Calculate escape probability from all neighbours
+                escape = 1.0
+                for neighbour, weight in graph.get_neighbours(vertex):
+                     escape *= (1 - table[t - 1][neighbour.index] * weight)
+                
+                table[t][vertex.index] = 1 - (1 - already_infected) * escape
+            
+            # Patient zero is always 1.0
+        table[t][source.index] = 1.0
 
     return table
