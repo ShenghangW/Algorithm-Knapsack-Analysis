@@ -1,13 +1,7 @@
-# Graph Algorithms in Action: Modelling a Disease Outbreak
-
-**Course:** Algorithms and Analysis — COSC2123/3119
-**University:** RMIT University
-
----
 
 ## Overview
 
-This assignment models a disease outbreak in the city of Metropolis as a weighted contact
+This models a disease outbreak in the city of Metropolis as a weighted contact
 graph, where each node represents a resident and each edge represents a contact relationship
 with an associated daily transmission probability. Using this model, you will implement
 efficient graph representations, compute infection risk across a planning horizon, and design
@@ -15,110 +9,6 @@ a dynamic programming strategy to allocate a limited supply of antiviral doses a
 as possible.
 
 ---
-
-## Tasks
-
-| Task | Marks | Description |
-|------|-------|-------------|
-| **A** | 5 | Implement an adjacency matrix graph representation |
-| **B** | 7 | Implement a dynamic programming solution to compute infection risk |
-| **C** | 8 | Theoretical and empirical analysis of all algorithm and representation combinations (report only) |
-| **D** | 10 | Implement a antiviral allocation strategy |
-
----
-
-### Task A — Adjacency Matrix (5 marks)
-
-**File to edit:** `graph/adjacency_matrix.py`
-
-An adjacency list representation is provided as a reference in `graph/adjacency_list.py`.
-Your task is to implement the `AdjacencyMatrix` class, which must expose exactly the same
-public interface as `AdjacencyList` so that all downstream algorithms work correctly with
-either representation by changing a single config value (`graph_type`).
-
-The matrix stores edge weights in a 2D grid where `matrix[i][j]` holds the transmission
-probability between resident `i` and resident `j`, or `0.0` if no edge exists. 
-
-To test your implementation:
-```bash
-python -m tests.test_adjacency
-```
-
----
-
-### Task B — Infection Risk DP (7 marks)
-
-**File to edit:** `transmission/task_b.py` — implement the `task_b` function.
-
-A Monte Carlo baseline is provided in `transmission/monte_carlo.py` for comparison. Your task
-is to implement the exact dynamic programming solution using the recurrence:
-
-```
-r[i][t] = 1 - (1 - r[i][t-1]) * product over Vj in N(Vi) of (1 - r[j][t-1] * w_ij)
-```
-
-where `r[i][t]` is the probability that resident `V_i` has been infected by the end of day `t`.
-
-Your function must return the full `(T+1) x |V|` risk table as a `list[list[float]]`, where
-`table[t][i]` is the infection risk for vertex `V_i` at day `t`.
-
-Set `risk_solver` to `"task_b"` in the config to run your implementation.
-
-To test your implementation:
-```bash
-# GO to cd tests
-python -m task_a 
-```
-
----
-
-### Task C — Empirical Analysis (8 marks, report only)
-
-**No implementation required.** Marks are awarded solely for the quality of your analysis,
-experimental design, and discussion in the report.  
-
-You will compare all four combinations of algorithm and representation:
-- `monte_carlo` with adjacency list
-- `monte_carlo` with adjacency matrix
-- `task_b` with adjacency list
-- `task_b` with adjacency matrix
-
-Use the timer utility in `utils/timer.py` to time each algorithm. Set `run_vaccine: false`
-in the config to skip Task D when running timing experiments.
-
-```python
-from utils.timer import start, stop
-
-start_time = start()
-# ... algorithm to time ...
-elapsed = stop(start_time)
-print(f"Elapsed: {elapsed:.4f}s")
-```
-
-Time only the algorithm itself — do not include graph construction or file I/O.
-
----
-
-### Task D — Antiviral Allocation (10 marks)
-
-**File to edit:** `treatment/task_d.py` — implement the `task_d` function.
-
-A brute-force baseline is provided in `treatment/vaccination_program.py` for comparison.
-Your task is to implement an efficient solution, selecting the subset of eligible residents 
-that maximises total benefit (infection risk) without exceeding the total dose capacity.
-
-Your function receives a flat list of eligible `Person` objects (sorted by benefit descending,
-patient zero excluded) and the total dose capacity. It must return:
-- A list of vaccinated `Person` objects
-- The total benefit achieved
-- The total doses used
-- The table used to calculate the best solution
-
-Set `vaccine_strategy` to `"task_d"` in the config to run your implementation.
-
-To test your implementation:
-```bash
-python -m tests.test_treatment
 ```
 
 ---
@@ -283,13 +173,3 @@ The following is an example visualisation produced by the simulation with 12 res
 ![Example visualisation](visuals/example_output.png)
 
 ---
-
-## Academic Integrity
-
-This is an individual assignment. Do not share your code or copy from others.
-Only edit the files explicitly marked with `# EDIT THIS FILE TO IMPLEMENT TASK X`.
-Any changes outside these marked files may cause your submission to fail automated tests.
-
-You are expected to use git version control and commit regularly with clear, meaningful
-commit messages. Submissions with no evidence of incremental development will receive
-zero marks regardless of correctness.
